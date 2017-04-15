@@ -21,13 +21,13 @@
 // You'll need to change these values to suit your board's available GPIOs
 // These are convenient (adjacent) pins on the GS-Oolite v1.0
 //      Pin ID     GPIO number
-#define HD_RS           0
-#define HD_RW           8 // not used if LCD is write-only (typical)
-#define HD_E            1
-#define HD_DB4         13
-#define HD_DB5         14
-#define HD_DB6         15
-#define HD_DB7         16
+#define HD_RS          58
+#define HD_RW          57 // not used if LCD is write-only (typical)
+#define HD_E           56
+#define HD_DB4         60
+#define HD_DB5         61
+#define HD_DB6         62
+#define HD_DB7         63
 
 #define COMMAND_CHAR   0xff // ASCII 255 = nbsp
 
@@ -205,12 +205,6 @@ static int __init hd44780_init(void)
 	int i;
 	int got_pins = 1;
 
-	// Register misc device
-	if (misc_register(&hd44780_device)) {
-		printk(KERN_WARNING "Couldn't register LCD device\n");
-		return -EBUSY;
-	}
-
 	// Request pins
 	for (i=0;i<PINS_NEEDED;i++)
 	{
@@ -223,6 +217,12 @@ static int __init hd44780_init(void)
 	if (!got_pins)
 	{
 		FreePins();
+		return -EBUSY;
+	}
+
+	// Register misc device
+	if (misc_register(&hd44780_device)) {
+		printk(KERN_WARNING "Couldn't register LCD device\n");
 		return -EBUSY;
 	}
 
@@ -260,5 +260,3 @@ static void __exit hd44780_exit(void)
 
 module_init(hd44780_init);
 module_exit(hd44780_exit);
-
-
